@@ -23,9 +23,8 @@ export function AuthProvider({ children }) {
     }
 
     async function loginWithGoogle() {
-        try {
-            const provider = new googleProvider();
-            return await signInWithPopup(auth, provider);
+        try {            
+            return await signInWithPopup(auth, googleProvider);
         } catch (error) {
             console.error('Erro ao fazer login com Google:', error);
         }

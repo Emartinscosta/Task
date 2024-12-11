@@ -1,23 +1,97 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import PrivateRoute from './routes/PrivateRoute';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-
+import React, { useState, useEffect } from "react";
+import TaskList from "./components/TaskList";
+import { getTasks, createTask, updateTask, deleteTask } from "./services/tasks";
+import { Form, Button, Container, Row, Col } from "react-bootstrap";
 
 function App() {
-    return (
-        <AuthProvider>
-            <Router>
-                <Routes>
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/" element={<PrivateRoute><HomePage /></PrivateRoute>} />
-                </Routes>
-            </Router>
-        </AuthProvider>
-    );
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState({ title: "", description: "" });
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const tasks = await getTasks();
+      setTasks(tasks);
+    };
+
+    fetchTasks();
+  }, []);
+
+  const handleCreateTask = async () => {
+    await createTask(newTask);
+    const tasks = await getTasks();
+    setTasks(tasks);
+    setNewTask({ title: "", description: "" }); // Limpar os campos
+  };
+
+  const handleUpdateTask = async (task) => {
+    const updatedTitle = prompt("Novo título:", task.title);
+    const updatedDescription = prompt("Nova descrição:", task.description);
+    await updateTask(task.id, {
+      title: updatedTitle,
+      description: updatedDescription,
+    });
+    const tasks = await getTasks();
+    setTasks(tasks);
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    await deleteTask(taskId);
+    const tasks = await getTasks();
+    setTasks(tasks);
+  };
+
+  return (
+    <Container className="mt-5">
+      <h1 className="mb-4">
+        <strong>Gerenciador de Tarefas</strong>
+      </h1>
+      <Form>
+        <Form.Group controlId="formTitle">
+          <Form.Label>Título</Form.Label>
+          <Form.Control
+            type="text"
+            value={newTask.title}
+            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+            placeholder="Digite o título da tarefa"
+          />
+        </Form.Group>
+        <Form.Group controlId="formDescription" className="mt-3">
+          <br />
+          <Form.Label>Descrição</Form.Label>
+          <Form.Control
+            type="text"
+            value={newTask.description}
+            onChange={(e) =>
+              setNewTask({ ...newTask, description: e.target.value })
+            }
+            placeholder="Digite a descrição da tarefa"
+          />
+        </Form.Group>
+        <br /><Form.Group controlId="formDate" className="mt-3">
+          <Form.Label>Data</Form.Label>
+          <Form.Control
+            type="date"
+            value={newTask.date}
+            onChange={(e) => setNewTask({ ...newTask, date: e.target.value })}
+            placeholder="Digite a data da tarefa"
+          />
+        </Form.Group>
+        <br />
+        <Button variant="primary" className="mt-3" onClick={handleCreateTask}>
+          Adicionar Tarefa
+        </Button>
+      </Form>
+      <Row className="mt-5">
+        <Col>
+          <TaskList
+            tasks={tasks}
+            onUpdate={handleUpdateTask}
+            onDelete={handleDeleteTask}
+          />
+        </Col>
+      </Row>
+    </Container>
+  );
 }
 
 export default App;
