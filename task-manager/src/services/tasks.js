@@ -1,3 +1,4 @@
+import React from 'react'; import { Card, Button } from 'react-bootstrap';
 import { db } from '../firebaseConfig';
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs } from 'firebase/firestore';
 
@@ -22,3 +23,5 @@ export const deleteTask = async (taskId) => {
     const taskDoc = doc(db, 'tasks', taskId);
     await deleteDoc(taskDoc);
 }
+
+

@@ -23,22 +23,19 @@ export function AuthProvider({ children }) {
     }
 
     async function loginWithGoogle() {
-        try {            
+        try {
             return await signInWithPopup(auth, googleProvider);
         } catch (error) {
             console.error('Erro ao fazer login com Google:', error);
         }
     }
 
-    function logout() {
-        return signOut(auth);
-    }
 
     const value = {
         currentUser,
         login,
         loginWithGoogle,
-        logout
+          
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

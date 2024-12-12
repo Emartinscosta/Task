@@ -39,7 +39,7 @@ function LoginPage() {
                 <Form.Control type="password" {...register("password")} required />
             </Form.Group>
             {error && <p>{error}</p>}
-            <Button type="submit">Login</Button>
+            <br /><Button type="submit">Login</Button>
             <Button onClick={handleGoogleLogin} variant="danger">Login com Google</Button>
         </Form>
     );
